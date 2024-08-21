@@ -1,0 +1,81 @@
+model Client {
+  id                     Int            @id @default(autoincrement())
+  idBiome                String?        @unique
+  email                  String?
+  activeClient           Boolean?
+  mainContributor        Boolean  @default(false)
+  status                 String?
+  name                   String?
+  webName                String?
+  introduction           String?
+  description            String?
+  promotionalTitle       String?
+  promotionalDescription String?
+  promotionalMediaUrl    String?
+  nbTotalStockApprouved  Int?
+  projects               Projects[]
+  codes                  Code[]
+  tags                   Tag[]
+  clientMedias           ClientMedia[]
+  attributions           Attribution[]
+  plantedTrees           PlantedTrees[]
+  webClients             WebClient[]
+  updatedWeb             DateTime          @default(now())
+  url                    String?
+
+  idParent               String?
+  parent                 Client?  @relation("ParentChild", fields: [idParent], references: [idBiome])
+  children               Client[] @relation("ParentChild")
+}
+
+model WebClient {
+  id            Int      @id @default(autoincrement())
+  idClient      Int
+  client        Client @relation(fields: [idClient], references: [id], onDelete: Cascade)
+  language      String // EN, FR, ES, etc.
+  introduction  String?
+  description   String?
+  promotionalTitle       String?
+  promotionalDescription String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Code {
+  id               Int               @id @default(autoincrement())
+  idClient         Int
+  title            String            @unique
+  isActiveCode     Boolean? //Désactiver automatiquement si date de validité dépassée
+  isArchived       Boolean?          @default(false)
+  validityDate     DateTime?
+  nbTreesPerUse    Int?
+  nbCodeAuthorized Int?
+  nbCodeUsed       Int?
+  createdAt        DateTime          @default(now())
+  projects         Projects[]
+  codeTransactions CodeTransaction[]
+  client           Client            @relation(fields: [idClient], references: [id], onDelete: Cascade)
+}
+
+
+model CodeTransaction {
+  id                    Int      @id @default(autoincrement())
+  token                 String   @unique //token pour la vérification de l'email
+  isEmailVerified       Boolean  @default(false) //passe à true quand l'url avec le token a été vérifié
+  emailUser             String?
+  url                   String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @default(now())
+  createdBy             String? //Web API, Admin
+  plantationCertificate String?
+  nbTreesPlanted        Int
+  firstname             String?
+  lastname              String?
+  language              String?
+  idCode                Int
+  idProject             Int
+  code                  Code     @relation(fields: [idCode], references: [id], onDelete: Cascade)
+  project               Projects @relation(fields: [idProject], references: [id], onDelete: Cascade)
+
+  @@unique([idCode, idProject, emailUser])
+}
