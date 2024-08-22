@@ -79,3 +79,20 @@ model CodeTransaction {
 
   @@unique([idCode, idProject, emailUser])
 }
+
+model User {
+  id               Int           @id @default(autoincrement())
+  name             String
+  email            String        @unique
+  password         String
+  role             String?
+  rights           String[] // Deprecated
+  profiles         UserProfile[]
+  isEmailVerified  Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  idBiome          String?
+  type             String?
+  impersonateToken String?       @unique
+  Projects         UserProject[]
+}
