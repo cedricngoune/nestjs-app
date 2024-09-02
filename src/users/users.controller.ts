@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Headers,
-  Ip,
   Get,
   Param,
   ParseIntPipe,
@@ -12,7 +10,6 @@ import {
   Patch,
   Put,
   Query,
-  ValidationPipe,
 } from '@nestjs/common'
 import { CreateUserDto } from './dtos/create-user.dto'
 
